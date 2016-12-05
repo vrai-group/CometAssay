@@ -44,7 +44,7 @@ batot = zeros(1);
 bbtot = zeros(1,4);
 bctot = zeros(1,2);
 TT = zeros(1);
-result = data;
+result = data_gray;
 
 % This is a loop to:
 % 1) Bound the objects in a rectangular box
