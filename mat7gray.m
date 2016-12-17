@@ -10,6 +10,10 @@ title('Original image');
 %% Convert the original image into grayscale image
 data_gray = rgb2gray(data);
 
+%% Show grayscale image
+figure, imshow(data_gray);
+title('Grayscale image');
+
 %% Use a median filter to filter out noise
 data_gray = medfilt2(data_gray, [3 3]);
 
@@ -23,8 +27,10 @@ data_gray = medfilt2(data_gray, [3 3]);
 %   at the risk of including some background pixels.
 data_bw = imbinarize(data_gray, 'adaptive', 'ForegroundPolarity', 'bright', 'Sensitivity', 0.7);
 
-% Remove objects containing fewer than 700px
-data_bw = bwareaopen(data_bw, 700);
+figure, imshow(data_bw), title('Binary image after the segmentation');
+
+% Remove objects containing fewer than 200px
+data_bw = bwareaopen(data_bw, 200);
 
 % Show binary image
 figure, imshow(data_bw), title('Binary image');
@@ -84,7 +90,7 @@ for object = 1:length(stats)
     %% 3) Find value of the head and the tail
     clear M2 M3
     
-    % improfile: get pixel-value along line segments of each channel
+    % improfile: get pixel-value along line segment
     [M2] = improfile(data_gray,x,y);
     
     j = 1;
@@ -134,18 +140,19 @@ for object = 1:length(stats)
     TT(object,1) = tail;
     
     % Print single comet and it's tail-value  
-    figure, subplot(1,3,1);
-    crop = imcrop(result,bb);
+    figure, subplot(1,2,1);
+    crop = imcrop(data_gray,bb);
     imshow(crop);
-    title({['Comet ',num2str(object)],['Image size: ',num2str(larg),'x',num2str(lung)],['Diameter of head: ',num2str(head), ' pixel'],['Length of tail: ',num2str(tail),' pixel']});
+    title({['Comet ',num2str(object)],['Image size: ',num2str(larg),'x',num2str(lung)],['Diameter of the head: ',num2str(head), ' pixel'],['Length of the tail: ',num2str(tail),' pixel']});
     
     % Plot the histogram of the intensity along the line-segments
     subplot(1,2,2);
-    improfile(data_gray,x,y);%mod
+    improfile(data_gray,x,y);
     title(['Histogram ',num2str(object)]);
     xlabel('Length of comet');
     ylabel('Color value');
     
+    break;
 end
 nComet = bw.NumObjects;
 figure, imshow(result), title(['Comets found: ',num2str(nComet)]);
